@@ -99,10 +99,10 @@ fn gameloop(bunnies: &mut Vec<Bunny>, names2: [&'static str; 20]) {
 
 		println!("Beginning of turn {}", &turn);
 
-		for bunny in bunnies.iter() {
+		for x in bunnies.iter() {
 
 			// need to figure out how to make it work...
-			bunny.incrementage();
+			x.incrementage();
 
 		}
 
