@@ -101,7 +101,7 @@ fn gameloop(bunnies: &mut Vec<Bunny>, names2: [&'static str; 20]) {
 
 		for x in bunnies.iter() {
 
-			// need to figure out how to make it work...
+			// need to figure out how to make it work....
 			x.incrementage();
 
 		}
