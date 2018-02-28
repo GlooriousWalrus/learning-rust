@@ -8,10 +8,10 @@ use std::{thread, time};
 
 //create a constant array of names that will have a static lifetime
 const NAMESLIST: [&'static str; 20] = ["Daedalus", "Icaros", "Ares", "Dionysus", "Hades", "Hephaestus",
-							   "Zeus", "Chronos", "Thanatos", "Atlas", "Talos", "Typhon",
-							   "Aergia", "Caerus", "Odysseus", "Kratos", "Prometheus", "Proteus",
-							   "Helios", "Asclepius"
-							  ];
+							   		   "Zeus", "Chronos", "Thanatos", "Atlas", "Talos", "Typhon",
+							   		   "Aergia", "Caerus", "Odysseus", "Kratos", "Prometheus", "Proteus",
+							   		   "Helios", "Asclepius"
+							  		  ];
 
 #[derive(Debug, Rand)]
 enum Sex { // 50% creation chance
@@ -51,18 +51,13 @@ impl<'a> Bunny<'a> {
 
 		self.age += 1; //increment age
 
-			// old age catches up
-			if self.ghoul == true {
-				if self.age > 50 {
-					println!("{} has died!", self.name);
-					drop(self);
-				}
-			} else {
-				if self.age > 10 {
-					println!("{} has died!", self.name);
-					drop(self);
-				}
-			}
+	}
+}
+
+impl<'a> Drop for Bunny<'a> {
+	fn drop(&mut self) {
+		println!("Dropping {}", self.name);
+		dosleep(1);
 	}
 }
 
@@ -78,32 +73,30 @@ fn gameloop(bunnies: &mut Vec<Bunny>, names2: [&'static str; 20]) {
 	let mut rng = rand::thread_rng();
 
 	for x in 0..5 { //looping through vector of Bunny structs 5 times. each iteration pushes a Bunny struct with populated fields to the vector bunnies.
-		&bunnies.push( Bunny { sex: rng.gen(),
-							  color: rng.gen(),
-							  name: rng.choose(&names2).unwrap(), // https://habrahabr.ru/post/274485/
-							  age: 0,
-							  ghoul: false
-						  });
-		&bunnies[x].announcebirth();
+		&mut bunnies.push( Bunny { sex: rng.gen(),
+							  	   color: rng.gen(),
+							  	   name: rng.choose(&names2).unwrap(), // https://habrahabr.ru/post/274485/
+							  	   age: 0,
+							  	   ghoul: false
+						  		 });
+		&mut bunnies[x].announcebirth();
 	}
-
-	// for bunny in bunnies {
-	//
-	// 	println!("DEBUG: {} is constructed in gameloop. sex: {:?}, color: {:?}, age: {}", bunny.name, bunny.sex, bunny.color, bunny.age);
-	//
-	// }
 
 	let mut turn: u64 = 1;
 
 	loop {
 
 		println!("Beginning of turn {}", &turn);
+		dosleep(2);
 
-		for x in bunnies.iter() {
+		for x in bunnies.iter_mut() {
 
-			// need to figure out how to make it work....
 			x.incrementage();
+			println!("Before: {:?}", x.name);
 
+			if x.age > 10 {
+				//bunnies.remove_item(); ok figure this &#it out too
+			}
 		}
 
 		turn += 1;
