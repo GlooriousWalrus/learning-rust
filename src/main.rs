@@ -6,14 +6,14 @@ use rand::Rng;
 use std::vec::Vec;
 use std::{thread, time};
 
-//create a constant array of names that will have a static lifetime, we will use this all the time.
+//create a constant array of names that will have a static lifetime, we will use this all the time. many functions reference to its element values.
 const NAMESLIST: [&'static str; 20] = ["Daedalus", "Icaros", "Ares", "Dionysus", "Hades", "Hephaestus",
 							   		   "Zeus", "Chronos", "Thanatos", "Atlas", "Talos", "Typhon",
 							   		   "Aergia", "Caerus", "Odysseus", "Kratos", "Prometheus", "Proteus",
 							   		   "Helios", "Asclepius"
 							  		  ];
 
-#[derive(Debug, Rand)]
+#[derive(Debug, Rand, PartialEq)]
 enum Sex { // 50% creation chance
 
 	Male,
@@ -87,59 +87,68 @@ fn dosleep(time: u64) {
 }
 
 // main gameloop, this is the core of this program
-fn gameloop(bunnies: &mut Vec<Bunny>, names2: [&'static str; 20]) {
+fn gameloop(bunnies: &mut Vec<Bunny>) {
 
 	let mut rng = rand::thread_rng();
 
 	for x in 0..5 { //looping through vector of Bunny structs 5 times. each iteration pushes a Bunny struct with populated fields to the vector bunnies.
 		bunnies.push( Bunny { sex: rng.gen(),
 							  	   color: rng.gen(),
-							  	   name: rng.choose(&names2).unwrap(), // https://habrahabr.ru/post/274485/
+							  	   name: rng.choose(&NAMESLIST).unwrap(), // https://habrahabr.ru/post/274485/
 							  	   age: 0,
 							  	   ghoul: false
 						  		 });
 		bunnies[x].announcebirth();
 	}
 
-	let mut turn: u64 = 1;
+	let mut turn: u64 = 0;
 
 	loop {
 
 		println!("Beginning of turn {}", &turn);
 		dosleep(2);
 
-		println!("DEBUG: {:?}", bunnies.len().to_string());
+		turn += 1;
 
-		// check if there are bunnies left, game over if the vector is empty.
-		if bunnies.is_empty() {
-			break;
-		}
+		println!("DEBUG beginning: {:?}", bunnies.len().to_string());
 
 		//iterate and increment age.
-		for x in bunnies.iter_mut() {
-			x.incrementage();
-		}
+		for x in bunnies.iter_mut() { x.incrementage(); }
 
 		// retain all those bunnies in the vector who should not die, drop those who should.
 		bunnies.retain(|i|i.shoulddie() == false);
+		println!("DEBUG after retain: {:?}", bunnies.len().to_string());
 
-		println!("DEBUG after: {:?}", bunnies.len().to_string());
+		// check if there are bunnies left, game over if the vector is empty.
+		if bunnies.is_empty() { break; }
 
-		turn += 1;
+		//breeding
+		breed(bunnies);
+
+		//call infect if there are ghouls
+		//infect()
 	}
 
 }
 
-fn greet() {
-	println!("///////////////GRADUATION IN RUST////////////////////");
+//figure out who is suitable for breeding and populate the referenced vector
+fn breed( bunnies: &mut Vec<Bunny> ) {
+
+	//find 1 male who is atleast 2 years old and gather indexes of all females who are atleast 2 years old.
+	//let suitablemale = bunnies.iter().find(|&x| x.age >= 2 && x.sex == Sex::Male );
+	let suitablemale = try!(bunnies.iter().find(|&x| x.age >= 2 && x.sex == Sex::Male ).ok_or("no item"));
+
+	println!("{:?}", suitablemale.name);
+
+
 }
 
 fn main() {
 
-	greet();
+	println!("///////////////GRADUATION IN RUST////////////////////");
 
     let mut bunnies: Vec<Bunny> = Vec::new(); // declaring a mutable vector of structs called bunnies
-	gameloop(&mut bunnies, NAMESLIST);
+	gameloop(&mut bunnies);
 
 	println!("DEBUG: ENTERING MAIN FUNCTION");
 
