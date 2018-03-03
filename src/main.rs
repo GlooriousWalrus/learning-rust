@@ -21,7 +21,7 @@ enum Sex { // 50% creation chance
 
 }
 
-#[derive(Debug, Rand)]
+#[derive(Debug, Rand, PartialEq)]
 enum Color { //inherited from mother object
 
 	White,
@@ -30,6 +30,7 @@ enum Color { //inherited from mother object
 	Spotted
 }
 
+#[derive(PartialEq)]
 struct Bunny<'a> { //lifetime declared as a to not outlive the name
 
 	sex: Sex, //50% creation chance
@@ -86,6 +87,10 @@ fn dosleep(time: u64) {
 
 }
 
+fn getrandomnumber() {
+
+}
+
 // main gameloop, this is the core of this program
 fn gameloop(bunnies: &mut Vec<Bunny>) {
 
@@ -120,7 +125,10 @@ fn gameloop(bunnies: &mut Vec<Bunny>) {
 		println!("DEBUG after retain: {:?}", bunnies.len().to_string());
 
 		// check if there are bunnies left, game over if the vector is empty.
-		if bunnies.is_empty() { break; }
+		if bunnies.is_empty() {
+			println!("DEBUG: no bunnies alive");
+			break;
+		}
 
 		//breeding
 		breed(bunnies);
@@ -134,11 +142,42 @@ fn gameloop(bunnies: &mut Vec<Bunny>) {
 //figure out who is suitable for breeding and populate the referenced vector
 fn breed( bunnies: &mut Vec<Bunny> ) {
 
+	let mut rng = rand::thread_rng();
+
 	//find 1 male who is atleast 2 years old and gather indexes of all females who are atleast 2 years old.
 	//let suitablemale = bunnies.iter().find(|&x| x.age >= 2 && x.sex == Sex::Male );
-	let suitablemale = try!(bunnies.iter().find(|&x| x.age >= 2 && x.sex == Sex::Male ).ok_or("no item"));
 
-	println!("{:?}", suitablemale.name);
+	let newborn: Vec<Bunny>;
+
+	if bunnies.iter().find(|&male| male.age >= 2 && male.sex == Sex::Male ) != None {
+
+		if bunnies.iter().find(|&female| female.age >= 2 && female.sex == Sex::Female) != None {
+
+			newborn = bunnies.iter().filter(|&female| female.age >= 2 && female.sex == Sex::Female).unwrap();
+
+			for new in newborn {
+
+				bunnies.push( Bunny { sex: rng.gen(),
+										   color: new.color,
+										   name: rng.choose(&NAMESLIST).unwrap(), // https://habrahabr.ru/post/274485/
+										   age: 0,
+										   ghoul: false
+										 });
+			}
+
+		} else {
+
+			println!("Debug: no suitable female found");
+
+		}
+
+	} else {
+		//do nothing
+		println!("DEBUG: no suitable male found");
+	}
+
+
+
 
 
 }
