@@ -23,6 +23,44 @@ pub const MALENAMES: [&'static str; 16] = [
     "David",
 ];
 
+pub const FEMALENAMES: [&'static str; 16] = [
+    "Emily",
+    "Hannah",
+    "Madison",
+    "Ashley",
+    "Sarah",
+    "Alexis",
+    "Samantha",
+    "Jessica",
+    "Elizabeth",
+    "Taylor",
+    "Lauren",
+    "Alyssa",
+    "Kayla",
+    "Abigail",
+    "Brianna",
+    "Olivia",
+];
+
+pub const LASTNAMES: [&'static str; 16] = [
+    "Smith",
+    "Johnson",
+    "Williams",
+    "Brown",
+    "Jones",
+    "Miller",
+    "Davis",
+    "Garcia",
+    "Rodriguez",
+    "Wilson",
+    "Martinez",
+    "Anderson",
+    "Taylor",
+    "Thomas",
+    "Hernandez",
+    "Moore",
+];
+
 #[derive(Debug, PartialEq, Clone)]
 pub enum Sex {
     Male,
@@ -38,7 +76,7 @@ impl Distribution<Sex> for Standard {
     }
 }
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Color {
     //inherited from mother object
     White,
@@ -71,26 +109,28 @@ pub struct Bunny<'a> {
 impl<'a> Bunny<'a> {
     //announces birth on creation
     pub fn announcebirth(&self) {
-        if self.ghoul == true {
-            println!(
-                "A {:?} {:?} bunny ghoul named {:?} was born!",
-                &self.sex, &self.color, &self.name
-            );
-        } else {
-            println!(
-                "A {:?} {:?} bunny named {:?} was born!",
-                &self.sex, &self.color, &self.name
-            );
+        if self.age == 0 {
+            if self.ghoul == true {
+                println!(
+                    "A {:?} {:?} bunny ghoul named {:?} was born!",
+                    &self.sex, &self.color, &self.name
+                );
+            } else {
+                println!(
+                    "A {:?} {:?} bunny named {:?} was born!",
+                    &self.sex, &self.color, &self.name
+                );
+            }
+            super::dosleep(1);
         }
-        super::dosleep(1);
     }
 
     // this method checks the age.
     pub fn shoulddie(&self) -> bool {
-        if self.ghoul == true && self.age > 50 {
+        if self.ghoul == true && self.age == 50 {
             println!("ghoul {} should die, age: {}", &self.name, &self.age);
             return true;
-        } else if self.ghoul == false && self.age > 10 {
+        } else if self.ghoul == false && self.age == 10 {
             println!("{} should die, age: {}", &self.name, &self.age);
             return true;
         } else {
@@ -107,7 +147,11 @@ impl<'a> Bunny<'a> {
 // explicitly tell us if the object is being dropped, for debugging.
 impl<'a> Drop for Bunny<'a> {
     fn drop(&mut self) {
-        println!("Dropping {}", self.name);
+        if self.ghoul == true {
+            println!("A Ghoul bunny {} has died!", self.name);
+        } else {
+            println!("A Bunny {}", self.name);
+        }
         super::dosleep(1);
     }
 }
