@@ -11,10 +11,11 @@ pub fn gameloop() {
     let mut rng = rand::thread_rng();
 
     for _x in 0..5 {
+        let mut temp: bunny::Sex = rand::random();
         colony.push(bunny::Bunny {
-            sex: rand::random(),
+            sex: temp,
             color: rand::random(),
-            name: &bunny::MALENAMES.choose(&mut rng).unwrap(),
+            name: nameselector(&temp),
             age: 0,
             ghoul: false,
         });
@@ -36,10 +37,6 @@ pub fn gameloop() {
             x.incrementage();
         }
 
-        // retain all those bunnies in the vector who should not die, drop those who should.
-        colony.retain(|i| i.shoulddie() == false);
-        println!("DEBUG after retain: {:?}", colony.len().to_string());
-
         // check if there are bunnies left, game over if the vector is empty.
         if colony.is_empty() {
             println!("DEBUG: no colony alive");
@@ -52,6 +49,10 @@ pub fn gameloop() {
 
         //breeding
         breed(&mut colony);
+
+        // retain all those bunnies in the vector who should not die, drop those who should.
+        colony.retain(|i| i.shoulddie() == false);
+        println!("DEBUG after retain: {:?}", colony.len().to_string());
 
         //call infect if there are ghouls
         //infect()
@@ -72,13 +73,15 @@ fn breed(colony: &mut Vec<bunny::Bunny>) {
                     && colony[j].sex == bunny::Sex::Female
                     && colony[j].ghoul == false
                 {
+                    let mut temp: bunny::Sex = rand::random();
                     colony.push(bunny::Bunny {
-                        sex: rand::random(),
+                        sex: temp,
                         color: colony[j].color,
-                        name: //nameselector(&self.sex),//&bunny::MALENAMES.choose(&mut rng).unwrap(),
+                        name: nameselector(&temp),
                         age: 0,
                         ghoul: false,
                     });
+                    colony[colony.len()-1].announcebirth();
                 }
             }
         }
@@ -89,11 +92,12 @@ pub fn dosleep(time: u64) {
     thread::sleep(time::Duration::from_secs(time));
 }
 
-pub fn nameselector(element: &bunny::Bunny) -> &'static str {
-    let mut rng = rand::thread_rng();
 
-    match &element.sex {
-        Male => &bunny::MALENAMES.choose(&mut rng).unwrap(),
-        _ => &bunny::FEMALENAMES.choose(&mut rng).unwrap()
-    }
+pub fn nameselector(element: &bunny::Sex) -> &'static str {
+    let mut rng = rand::thread_rng();
+    match element {
+        bunny::Sex::Male => return &bunny::MALENAMES.choose(&mut rng).unwrap(),
+        bunny::Sex::Female => return &bunny::FEMALENAMES.choose(&mut rng).unwrap(),
+        _ => panic!("this is a terrible mistake!"),
+    };
 }

@@ -61,7 +61,7 @@ pub const LASTNAMES: [&'static str; 16] = [
     "Moore",
 ];
 
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub enum Sex {
     Male,
     Female,
