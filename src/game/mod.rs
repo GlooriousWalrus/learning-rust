@@ -1,7 +1,9 @@
 use std::{thread, time, vec::Vec};
 
-use rand::seq::SliceRandom;
-
+use rand::{
+    distributions::{Distribution, Uniform},
+    seq::SliceRandom,
+};
 pub mod bunny;
 
 pub const MAXPOPULATION: usize = 1000;
@@ -99,7 +101,7 @@ fn breed(colony: &mut Vec<bunny::Bunny>) {
                     color: colony[j].color,
                     name: nameselector(&temp),
                     age: 0,
-                    ghoul: false,
+                    ghoul: ghoulchance(),
                 });
                 colony[colony.len() - 1].announcebirth();
             }
@@ -126,6 +128,17 @@ fn cull(colony: &mut Vec<bunny::Bunny>) {
     for _victim in 0..=cullsize {
         let mut rng = rand::thread_rng();
         let kek = colony.remove(rng.gen_range(0, colony.len()));
+    }
+}
+
+fn ghoulchance() -> bool {
+    let mut rng = rand::thread_rng();
+    let die = Uniform::from(0..50);
+    let throw = die.sample(&mut rng);
+    if throw == 1 {
+        return true;
+    } else {
+        return false;
     }
 }
 
