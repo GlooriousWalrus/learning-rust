@@ -34,7 +34,9 @@ pub fn gameloop() {
         println!("DEBUG: {:?} bunnies alive", colony.len().to_string());
 
         // check if there are bunnies left, game over if the vector is empty.
-        if ispopulationdead(&mut colony) { break; }
+        if ispopulationdead(&mut colony) {
+            break;
+        }
 
         //iterate and increment age.
         for x in colony.iter_mut() {
@@ -43,20 +45,31 @@ pub fn gameloop() {
 
         // retain all those bunnies in the vector who should not die, drop those who should.
         colony.retain(|i| i.shoulddie() == false);
-        println!("DEBUG: post-age retain population is {:?}", colony.len().to_string());
+        println!(
+            "DEBUG: post-age retain population is {:?}",
+            colony.len().to_string()
+        );
         dosleep(2);
 
-        if ispopulationdead(&mut colony) { break; }
+        if ispopulationdead(&mut colony) {
+            break;
+        }
 
         //breeding
         breed(&mut colony);
 
-        println!("DEBUG: post breed population is {:?}", colony.len().to_string());
+        println!(
+            "DEBUG: post breed population is {:?}",
+            colony.len().to_string()
+        );
         dosleep(2);
 
         if colony.len() >= MAXPOPULATION {
             cull(&mut colony);
-            println!("DEBUG: cull survivor population is {:?}", colony.len().to_string());
+            println!(
+                "DEBUG: cull survivor population is {:?}",
+                colony.len().to_string()
+            );
             dosleep(2);
         }
 
@@ -72,32 +85,33 @@ fn breed(colony: &mut Vec<bunny::Bunny>) {
     //find 1 male who is atleast 2 years old and gather indexes of all females who are atleast 2 years old.
     //let suitablemale = colony.iter().find(|&x| x.age >= 2 && x.sex == Sex::Male && x.ghoul == false);
 
-        if colony.iter().find(|&x| x.age >= 2 && x.sex == bunny::Sex::Male && x.ghoul == false) != None {
-            for j in 0..colony.len() {
-                if colony[j].age >= 2
-                    && colony[j].sex == bunny::Sex::Female
-                    && colony[j].ghoul == false
-                {
-                    let mut temp: bunny::Sex = rand::random();
-                    colony.push(bunny::Bunny {
-                        sex: temp,
-                        color: colony[j].color,
-                        name: nameselector(&temp),
-                        age: 0,
-                        ghoul: false,
-                    });
-                    colony[colony.len()-1].announcebirth();
-                }
+    if colony
+        .iter()
+        .find(|&x| x.age >= 2 && x.sex == bunny::Sex::Male && x.ghoul == false)
+        != None
+    {
+        for j in 0..colony.len() {
+            if colony[j].age >= 2 && colony[j].sex == bunny::Sex::Female && colony[j].ghoul == false
+            {
+                let mut temp: bunny::Sex = rand::random();
+                colony.push(bunny::Bunny {
+                    sex: temp,
+                    color: colony[j].color,
+                    name: nameselector(&temp),
+                    age: 0,
+                    ghoul: false,
+                });
+                colony[colony.len() - 1].announcebirth();
             }
         }
     }
+}
 
 pub fn dosleep(time: u64) {
     thread::sleep(time::Duration::from_secs(time));
 }
 
-
-pub fn nameselector(element: &bunny::Sex) -> &'static str {
+fn nameselector(element: &bunny::Sex) -> &'static str {
     let mut rng = rand::thread_rng();
     match element {
         bunny::Sex::Male => return &bunny::MALENAMES.choose(&mut rng).unwrap(),
@@ -106,16 +120,16 @@ pub fn nameselector(element: &bunny::Sex) -> &'static str {
     };
 }
 
-pub fn cull(colony: &mut Vec<bunny::Bunny>) {
+fn cull(colony: &mut Vec<bunny::Bunny>) {
     use rand::Rng;
-    let mut cullsize: usize = colony.len()/2;
+    let mut cullsize: usize = colony.len() / 2;
     for _victim in 0..=cullsize {
         let mut rng = rand::thread_rng();
         let kek = colony.remove(rng.gen_range(0, colony.len()));
     }
 }
 
-pub fn ispopulationdead(colony: &mut Vec<bunny::Bunny>) -> bool {
+fn ispopulationdead(colony: &mut Vec<bunny::Bunny>) -> bool {
     if colony.is_empty() {
         println!("DEBUG: no colony alive");
         return true;
