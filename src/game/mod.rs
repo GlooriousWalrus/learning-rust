@@ -3,6 +3,7 @@ use std::{thread, time, vec::Vec};
 use rand::{
     distributions::{Distribution, Uniform},
     seq::SliceRandom,
+    Rng,
 };
 pub mod bunny;
 
@@ -76,7 +77,9 @@ pub fn gameloop() {
         }
 
         //call infect if there are ghouls
-        //infect()
+        if colony.iter().find(|&x| x.ghoul == false) != None {
+                infect(&mut colony);
+        }
     }
 }
 
@@ -123,11 +126,25 @@ fn nameselector(element: &bunny::Sex) -> &'static str {
 }
 
 fn cull(colony: &mut Vec<bunny::Bunny>) {
-    use rand::Rng;
     let mut cullsize: usize = colony.len() / 2;
     for _victim in 0..=cullsize {
         let mut rng = rand::thread_rng();
         let kek = colony.remove(rng.gen_range(0, colony.len()));
+    }
+}
+
+fn infect(mut colony: &mut Vec<bunny::Bunny>) {
+    let mut ghoulcount: u64 = 0;
+    for x in 0..colony.len() {
+        if colony[x].ghoul == true {
+            ghoulcount += 1;
+        }
+    }
+
+    for _target in 0..ghoulcount {
+        let mut rng = rand::thread_rng();
+        let mut newghoul = colony.iter().position(|r| r == colony.iter().nth(rng.gen_range(0, colony.len())).unwrap() && r.ghoul == false);
+        colony[newghoul.unwrap()].ghoul = true;
     }
 }
 
