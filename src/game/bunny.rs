@@ -121,7 +121,8 @@ impl<'a> Bunny<'a> {
                     &self.sex, &self.color, &self.name
                 );
             }
-            super::dosleep(1);
+            //#[cfg(not(debug_assertations))]
+            //super::dosleep(1);
         }
     }
 
@@ -150,8 +151,8 @@ impl<'a> Drop for Bunny<'a> {
         if self.ghoul == true {
             println!("A Ghoul bunny {} has died!", self.name);
         } else {
-            println!("A Bunny {}", self.name);
+            println!("A Bunny {} has died", self.name);
         }
-        super::dosleep(1);
+        //super::dosleep(1);
     }
 }
