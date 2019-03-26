@@ -112,12 +112,12 @@ impl<'a> Bunny<'a> {
         if self.age == 0 {
             if self.ghoul == true {
                 println!(
-                    "A {:?} {:?} bunny ghoul named {:?} was born!",
+                    "GHOUL!!! {:?} {:?} bunny named {:?} was born!",
                     &self.sex, &self.color, &self.name
                 );
             } else {
                 println!(
-                    "A {:?} {:?} bunny named {:?} was born!",
+                    "{:?} {:?} bunny named {:?} was born!",
                     &self.sex, &self.color, &self.name
                 );
             }
@@ -129,13 +129,13 @@ impl<'a> Bunny<'a> {
     // this method checks the age.
     pub fn shoulddie(&self) -> bool {
         if self.ghoul == true && self.age == 50 {
-            println!("ghoul {} should die, age: {}", &self.name, &self.age);
+            //println!("ghoul {} should die, age: {}", &self.name, &self.age);
             return true;
         } else if self.ghoul == false && self.age == 10 {
-            println!("{} should die, age: {}", &self.name, &self.age);
+            //println!("{} should die, age: {}", &self.name, &self.age);
             return true;
         } else {
-            println!("{} aged to {}", &self.name, &self.age);
+            //println!("{} aged to {}", &self.name, &self.age);
             return false;
         }
     }
@@ -144,12 +144,18 @@ impl<'a> Bunny<'a> {
     pub fn incrementage(&mut self) {
         self.age += 1;
     }
+
+    pub fn becomeinfected(&mut self) {
+        self.ghoul = true;
+        println!("Bunny {:?} has been Infected!", &self.name);
+        super::dosleep(2);
+    }
 }
 // explicitly tell us if the object is being dropped, for debugging.
 impl<'a> Drop for Bunny<'a> {
     fn drop(&mut self) {
         if self.ghoul == true {
-            println!("A Ghoul bunny {} has died!", self.name);
+            println!("A GHOUL bunny {} has died!", self.name);
         } else {
             println!("A Bunny {} has died", self.name);
         }

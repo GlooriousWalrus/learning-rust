@@ -78,7 +78,7 @@ pub fn gameloop() {
 
         //call infect if there are ghouls
         if colony.iter().find(|&x| x.ghoul == false) != None {
-                infect(&mut colony);
+            infect(&mut colony);
         }
     }
 }
@@ -94,22 +94,22 @@ fn breed(colony: &mut Vec<bunny::Bunny>) {
         .iter()
         .find(|&x| x.age >= 2 && x.sex == bunny::Sex::Male && x.ghoul == false)
         != None
-        {
-            for j in 0..colony.len() {
-                if colony[j].age >= 2 && colony[j].sex == bunny::Sex::Female && colony[j].ghoul == false
-                {
-                    let mut temp: bunny::Sex = rand::random();
-                    colony.push(bunny::Bunny {
-                        sex: temp,
-                        color: colony[j].color,
-                        name: nameselector(&temp),
-                        age: 0,
-                        ghoul: ghoulchance(),
-                    });
-                    colony[colony.len() - 1].announcebirth();
-                }
+    {
+        for j in 0..colony.len() {
+            if colony[j].age >= 2 && colony[j].sex == bunny::Sex::Female && colony[j].ghoul == false
+            {
+                let mut temp: bunny::Sex = rand::random();
+                colony.push(bunny::Bunny {
+                    sex: temp,
+                    color: colony[j].color,
+                    name: nameselector(&temp),
+                    age: 0,
+                    ghoul: ghoulchance(),
+                });
+                colony[colony.len() - 1].announcebirth();
             }
         }
+    }
 }
 
 pub fn dosleep(time: u64) {
@@ -142,19 +142,19 @@ fn infect(mut colony: &mut Vec<bunny::Bunny>) {
     println!("INFECTING {:?} BUNNIES", ghoulcount);
     let mut ghoulsmade = 0;
 
-    if ghoulcount < colony.len()/2 {
+    if ghoulcount < colony.len() / 2 {
         while ghoulsmade != ghoulcount {
             //infect
-            let rng: usize = rand::thread_rng().gen_range(0, colony.len()-1);
+            let rng: usize = rand::thread_rng().gen_range(0, colony.len() - 1);
             if colony[rng].ghoul == false {
-                colony[rng].ghoul = true;
+                colony[rng].becomeinfected();
             }
             //
             ghoulsmade += 1;
         }
     } else {
         for bunny in colony.iter_mut() {
-            bunny.ghoul = true;
+            bunny.becomeinfected();
         }
     }
 }
