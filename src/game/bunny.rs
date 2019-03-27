@@ -42,6 +42,7 @@ pub const FEMALENAMES: [&'static str; 16] = [
     "Olivia",
 ];
 
+#[allow(dead_code)]
 pub const LASTNAMES: [&'static str; 16] = [
     "Smith",
     "Johnson",
@@ -129,13 +130,13 @@ impl<'a> Bunny<'a> {
     // this method checks the age.
     pub fn shoulddie(&self) -> bool {
         if self.ghoul == true && self.age == 50 {
-            //println!("ghoul {} should die, age: {}", &self.name, &self.age);
+            println!("ghoul {} should die, age: {}", &self.name, &self.age);
             return true;
         } else if self.ghoul == false && self.age == 10 {
-            //println!("{} should die, age: {}", &self.name, &self.age);
+            println!("{} should die, age: {}", &self.name, &self.age);
             return true;
         } else {
-            //println!("{} aged to {}", &self.name, &self.age);
+            println!("{} aged to {}", &self.name, &self.age);
             return false;
         }
     }

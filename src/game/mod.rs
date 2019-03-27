@@ -11,10 +11,9 @@ pub const MAXPOPULATION: usize = 1000;
 
 pub fn gameloop() {
     let mut colony: Vec<bunny::Bunny> = Vec::new();
-    let mut rng = rand::thread_rng();
 
     for x in 0..5 {
-        let mut temp: bunny::Sex = rand::random();
+        let temp: bunny::Sex = rand::random();
         colony.push(bunny::Bunny {
             sex: temp,
             color: rand::random(),
@@ -85,7 +84,6 @@ pub fn gameloop() {
 
 //figure out who is suitable for breeding and populate the referenced vector
 fn breed(colony: &mut Vec<bunny::Bunny>) {
-    let mut rng = rand::thread_rng();
 
     //find 1 male who is atleast 2 years old and gather indexes of all females who are atleast 2 years old.
     //let suitablemale = colony.iter().find(|&x| x.age >= 2 && x.sex == Sex::Male && x.ghoul == false);
@@ -98,7 +96,7 @@ fn breed(colony: &mut Vec<bunny::Bunny>) {
         for j in 0..colony.len() {
             if colony[j].age >= 2 && colony[j].sex == bunny::Sex::Female && colony[j].ghoul == false
             {
-                let mut temp: bunny::Sex = rand::random();
+                let temp: bunny::Sex = rand::random();
                 colony.push(bunny::Bunny {
                     sex: temp,
                     color: colony[j].color,
@@ -121,19 +119,18 @@ fn nameselector(element: &bunny::Sex) -> &'static str {
     match element {
         bunny::Sex::Male => return &bunny::MALENAMES.choose(&mut rng).unwrap(),
         bunny::Sex::Female => return &bunny::FEMALENAMES.choose(&mut rng).unwrap(),
-        _ => panic!("this is a terrible mistake!"),
     };
 }
 
 fn cull(colony: &mut Vec<bunny::Bunny>) {
-    let mut cullsize: usize = colony.len() / 2;
+    let cullsize: usize = colony.len() / 2;
     for _victim in 0..=cullsize {
         let mut rng = rand::thread_rng();
-        let kek = colony.remove(rng.gen_range(0, colony.len()));
+        colony.remove(rng.gen_range(0, colony.len()));
     }
 }
 //let rng: usize = rand::thread_rng().gen_range(0, colony.len()-1);
-fn infect(mut colony: &mut Vec<bunny::Bunny>) {
+fn infect(colony: &mut Vec<bunny::Bunny>) {
     //get ghoulcount
     let ghoulcount = colony.iter().filter(|&n| n.ghoul == true).count();
     if ghoulcount == 0 {
