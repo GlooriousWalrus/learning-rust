@@ -86,7 +86,6 @@ pub fn gameloop() {
 fn breed(colony: &mut Vec<bunny::Bunny>) {
 
     //find 1 male who is atleast 2 years old and gather indexes of all females who are atleast 2 years old.
-    //let suitablemale = colony.iter().find(|&x| x.age >= 2 && x.sex == Sex::Male && x.ghoul == false);
 
     if colony
         .iter()
@@ -133,7 +132,7 @@ fn cull(colony: &mut Vec<bunny::Bunny>) {
 fn infect(colony: &mut Vec<bunny::Bunny>) {
     //get ghoulcount
     let ghoulcount = colony.iter().filter(|&n| n.ghoul == true).count();
-    if ghoulcount == 0 {
+    if ghoulcount == 0 || ghoulcount == colony.len() {
         return;
     }
     println!("INFECTING {:?} BUNNIES", ghoulcount);
@@ -141,18 +140,16 @@ fn infect(colony: &mut Vec<bunny::Bunny>) {
 
     if ghoulcount < colony.len() / 2 {
         while ghoulsmade != ghoulcount {
-            //infect
+            //create a vector of mutable references to the suitable elements
+            let kek = colony.iter().take_while(|x| x.ghoul == false);
             let rng: usize = rand::thread_rng().gen_range(0, colony.len() - 1);
-            if colony[rng].ghoul == false {
-                colony[rng].becomeinfected();
-            }
-            //
+
+            //TODO: finish me.
+
             ghoulsmade += 1;
         }
     } else {
-        for bunny in colony.iter_mut() {
-            bunny.becomeinfected();
-        }
+        colony.iter_mut().for_each(|x| x.becomeinfected());
     }
 }
 
